@@ -1,0 +1,96 @@
+create or replace temporary table books 
+	(
+		book_id INT NOT NULL AUTOINCREMENT,
+		title VARCHAR(100),
+		author_fname VARCHAR(100),
+		author_lname VARCHAR(100),
+		released_year INT,
+		stock_quantity INT,
+		pages INT,
+		PRIMARY KEY(book_id)
+	);
+
+INSERT INTO books (title, author_fname, author_lname, released_year, stock_quantity, pages)
+VALUES
+('The Namesake', 'Jhumpa', 'Lahiri', 2003, 32, 291),
+('Norse Mythology', 'Neil', 'Gaiman',2016, 43, 304),
+('American Gods', 'Neil', 'Gaiman', 2001, 12, 465),
+('Interpreter of Maladies', 'Jhumpa', 'Lahiri', 1996, 97, 198),
+('A Hologram for the King: A Novel', 'Dave', 'Eggers', 2012, 154, 352),
+('The Circle', 'Dave', 'Eggers', 2013, 26, 504),
+('The Amazing Adventures of Kavalier & Clay', 'Michael', 'Chabon', 2000, 68, 634),
+('Just Kids', 'Patti', 'Smith', 2010, 55, 304),
+('A Heartbreaking Work of Staggering Genius', 'Dave', 'Eggers', 2001, 104, 437),
+('Coraline', 'Neil', 'Gaiman', 2003, 100, 208),
+('What We Talk About When We Talk About Love: Stories', 'Raymond', 'Carver', 1981, 23, 176),
+('Where Im Calling From Selected Stories', 'Raymond', 'Carver', 1989, 12, 526),
+('White Noise', 'Don', 'DeLillo', 1985, 49, 320),
+('Cannery Row', 'John', 'Steinbeck', 1945, 95, 181),
+('Oblivion: Stories', 'David', 'Foster Wallace', 2004, 172, 329),
+('Consider the Lobster', 'David', 'Foster Wallace', 2005, 92, 343);
+
+;
+
+select 
+concat_ws(' ', author_fname, author_lname, title) as full_name
+from books;
+
+select 
+concat(substr(title, 1, 10), '...')  as full_name
+from books;
+
+select concat(
+substr(author_fname, 1, 1), 
+'.',
+substr(author_lname, 1, 1),
+'.')
+from books;
+
+select concat_ws(' ','I LOVE', UPPER(title), '!!!')
+from books;
+
+select concat_ws(' ','I LOVE', UPPER(title), '!!!')
+from books;
+
+-- Challenges with the Book dataset, practicing the Agreggated Functions--
+
+-- 1. Print the numnber of books in the database --
+select count(*) from books;
+
+-- 2. Print out how many books were released by each year  --
+select 
+    released_year,
+    count(*)
+from books
+group by 1;
+
+-- 3. Print out the total number of books in stock  --
+select 
+    title, 
+    sum(stock_quantity)
+from books
+group by 1;
+
+-- 4. Find the average released_year for each author --
+select 
+    author_lname,  
+    author_fname, 
+    avg(released_year)
+from books
+group by 1,2;
+
+-- 5. Find the full name of the authot who wrote the longest book --
+select 
+    concat(author_lname,' ',author_fname) as author,
+    pages 
+from books
+where pages = (select max(pages) from books);
+
+-- 6. Make this happen challenge: Display a table that has year, the number of books, and the average of pages --
+select 
+    released_year as year,
+    count(*) as books,
+    avg(pages) as avgpages
+from books
+group by 1
+order by 1 asc;
